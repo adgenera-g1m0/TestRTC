@@ -39,6 +39,7 @@ extern int _mytimezone;
 #endif
 
 extern RTC_HandleTypeDef hrtc;
+extern UART_HandleTypeDef huart2;
 
 #ifndef NEW_FUNCTIONS
 extern struct tm timep;

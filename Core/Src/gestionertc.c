@@ -241,6 +241,10 @@ void SetOraNew(time_t epochtime){
 	 RTC_TimeTypeDef sTime;
 	 RTC_DateTypeDef sDate;
 
+	 memset(&sTime,0,sizeof(RTC_TimeTypeDef));
+	 memset(&sDate,0,sizeof(RTC_DateTypeDef));
+
+
 	 struct tm time_tm;
 	 time_tm = *(localtime(&epochtime));
 
@@ -268,6 +272,17 @@ void SetOraNew(time_t epochtime){
 
 	 HAL_RTCEx_BKUPWrite(&hrtc,RTC_BKP_DR0,0x32F2); // lock it in with the backup registers
 
+	 /*
+	 uint8_t buffer[128];
+	 memset(buffer,0,128);
+
+
+	 sprintf(buffer,"---- Dump Set Time (%u) ----\nYear = %u, Month = %u, Date = %u [%u:%u:%u]\n",(uint32_t)epochtime,
+			 sDate.Year,sDate.Month,sDate.Date,sTime.Hours,sTime.Minutes,sTime.Seconds);
+
+	 //sprintf(buffer,"test\n");
+	HAL_UART_Transmit(&huart2, buffer, strnlen(buffer,128), HAL_MAX_DELAY);*/
+
 
 }
 
@@ -275,6 +290,11 @@ time_t GetOraNew(){
 
 	RTC_DateTypeDef rtcDate;
 	RTC_TimeTypeDef rtcTime;
+
+	memset(&rtcTime,0,sizeof(RTC_TimeTypeDef));
+	memset(&rtcDate,0,sizeof(RTC_DateTypeDef));
+
+
 	HAL_RTC_GetTime(&hrtc, &rtcTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &rtcDate, RTC_FORMAT_BIN);
 	uint8_t hh = rtcTime.Hours;
@@ -293,6 +313,29 @@ time_t GetOraNew(){
 	tim.tm_min = mm;
 	tim.tm_sec = ss;
 	currentTime = mktime(&tim);
+
+	/*
+	uint8_t buffer[128];
+	memset(buffer,0,128);
+
+
+	sprintf(buffer,"---- Dump Get Time (%u) ----\nYear = %u, Month = %u, Date = %u\n",(uint32_t)currentTime,
+			rtcDate.Year,rtcDate.Month,rtcDate.Date);
+
+	HAL_UART_Transmit(&huart2, buffer, strnlen(buffer,128), HAL_MAX_DELAY);
+
+	memset(buffer,0,128);
+	sprintf("[%u:%u:%u]\n",rtcTime.Hours,rtcTime.Minutes,rtcTime.Seconds);
+
+	HAL_UART_Transmit(&huart2, buffer, strnlen(buffer,128), HAL_MAX_DELAY);
+
+	memset(buffer,0,128);
+	sprintf("[%d-%d-%d %d:%d:%d]\n",tim.tm_year, tim.tm_mon, tim.tm_mday, tim.tm_hour, tim.tm_min, tim.tm_sec);
+
+	//sprintf(buffer,"test get\n");
+	HAL_UART_Transmit(&huart2, buffer, strnlen(buffer,128), HAL_MAX_DELAY);*/
+
+
 	return currentTime;
 }
 
